@@ -1,0 +1,26 @@
+{
+  "name": "lettermail-bridge",
+  "version": "0.1.0",
+  "description": "A bridge between Matrix and the postal network",
+  "main": "lib/index.js",
+  "repository": "git@github.com:t2bot/lettermail-bridge.git",
+  "author": "t2bot.io",
+  "license": "Apache-2.0",
+  "private": true,
+  "scripts": {
+    "start:bot": "yarn build:ts && node lib/index.js",
+    "build": "yarn build:ts",
+    "build:ts": "tsc"
+  },
+  "dependencies": {
+    "config": "^3.3.3",
+    "js-yaml": "^4.0.0",
+    "matrix-bot-sdk": "^0.5.13",
+    "pg": "^8.5.1"
+  },
+  "devDependencies": {
+    "@types/node": "12",
+    "@types/pg": "^7.14.9",
+    "typescript": "^4.1.4"
+  }
+}
