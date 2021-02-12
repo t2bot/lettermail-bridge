@@ -1,16 +1,41 @@
-# Where the homeserver's Client-Server API is located. Typically this
-# is where clients would be connecting to in order to send messages.
-homeserverUrl: "https://matrix.org"
+# Options for configuring the Matrix side of the bridge.
+matrix:
+  # For received letters, these are the default profile settings.
+  defaultAvatar: "mxc://t2bot.io/183b28d9d10511e3c8b937674168c1de604076c0"
+  defaultName: "Letter"
 
-# An access token for the bot to use. Learn how to get an access token
-# at https://t2bot.io/docs/access_tokens
-accessToken: "YOUR_TOKEN_HERE"
+  # Where to send management information regarding the bot. This includes
+  # unroutable mail notifications.
+  managementRoom: "!room:example.org"
 
-# Whether or not to autojoin rooms when invited.
-autoJoin: true
+  # The appservice registration information
+  appservice:
+    # The HS and AS tokens. You should generate these.
+    hsToken: "GENERATE_ME"
+    asToken: "GENERATE_ME"
 
-# Location on disk for where to store various bot information.
-dataPath: "storage"
+    # The prefix to use for received letters.
+    userPrefix: "postal_"
+
+    # The localpart for the bot
+    botLocalpart: "postmaster"
+
+    # The domain for which the appservice is hosted
+    domain: "localhost"
+
+    # The webserver's listener configuration
+    address: "0.0.0.0"
+    port: 8080
+
+    # Where to access the homeserver's client-server API.
+    csUrl: "https://localhost:8448"
+
+    # Where to store miscellaneous information about the appservice.
+    dataPath: "storage"
+
+    # Profile information for the bot itself.
+    botName: "Postmaster"
+    botAvatar: "mxc://t2bot.io/b741b75047dfbde0470a93566325de2e54b439e0"
 
 # Options for configuring the EarthClassMail side of the bridge.
 earthClassMail:
