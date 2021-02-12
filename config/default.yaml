@@ -11,3 +11,18 @@ autoJoin: true
 
 # Location on disk for where to store various bot information.
 dataPath: "storage"
+
+# Options for configuring the EarthClassMail side of the bridge.
+earthClassMail:
+  # The API URL to use. This shouldn't change.
+  apiUrl: "https://api.earthclassmail.com"
+
+  # Your username and password for ECM. Note that an ECM API Key
+  # is not enough access to be able to perform actions as you.
+  username: "email@example.org"
+  password: "s3cret"
+
+  # The inbox ID to use. If zero or negative, the bridge will assume
+  # the first returned mailbox is the one to use (this is the case for
+  # most setups).
+  inboxId: 0
