@@ -12,6 +12,11 @@ import {
 import { ecmLoopRun } from "./ecm_loop";
 import config from "./config";
 import * as path from "path";
+import {Liquid} from "liquidjs";
+import * as express from "express";
+import { LQ_TEST } from "./TMP";
+import * as htmlToPdf from "html-pdf-node";
+import * as inlineImages from "inline-images";
 
 LogService.setLogger(new RichConsoleLogger());
 LogService.setLevel(LogLevel.DEBUG);
@@ -50,7 +55,37 @@ const opts: IAppserviceOptions = {
 const appservice = new Appservice(opts);
 AutojoinRoomsMixin.setupOnAppservice(appservice);
 
+const tmplPath = process.env.TMPL_PATH || './tmpl';
+const lqEngine = new Liquid({
+    root: tmplPath,
+    cache: process.env.NODE_ENV === 'production',
+});
+
 (async function () {
+    appservice.expressAppInstance.engine('liquid', lqEngine.express());
+    appservice.expressAppInstance.set('views', tmplPath);
+    appservice.expressAppInstance.set('view engine', 'liquid');
+    appservice.expressAppInstance.use('/', express.static(tmplPath));
+    appservice.expressAppInstance.get('/pdf', async (req, res) => {
+        const f = await lqEngine.renderFile("letter.liquid", LQ_TEST);
+        const inlined = inlineImages(f, tmplPath).toString();
+        const pdf = await htmlToPdf.generatePdf({content: inlined}, {
+            printBackground: true,
+            format: 'letter',
+            margin: {
+                top: '0.1in',
+                right: '0.1in',
+                left: '0.1in',
+                bottom: '0.1in',
+            },
+        });
+        res.header('Content-Type', 'application/pdf');
+        return res.send(pdf);
+    });
+    appservice.expressAppInstance.get('/test', (req, res) => {
+        return res.render('letter.liquid', LQ_TEST);
+    });
+
     LogService.info("index", "Starting appservice...");
     await appservice.begin();
 

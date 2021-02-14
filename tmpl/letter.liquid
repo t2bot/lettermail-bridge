@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Letter</title>
+    <style type="text/css">
+        * {
+            filter: grayscale(100%);
+        }
+        body,html {
+            margin: 0;
+            padding: 0;
+            font-family: sans-serif;
+            font-size: 12px;
+        }
+        body {
+            margin: 12px;
+        }
+        a {
+            text-decoration: none;
+            color: #555;
+        }
+        #header_info {
+            float: right;
+            width: 40%;
+        }
+        #header_info img {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        code {
+            padding: 5px;
+            vertical-align: text-top;
+            background-color: #ddd;
+            border-radius: 2px;
+            font-family: monospace;
+        }
+        #date {
+            margin-top: 65px;
+        }
+        #content {
+            line-height: 20px;
+        }
+        .room {
+            margin-left: 12px;
+        }
+        .room .profile img {
+            width: 32px;
+            height: 32px;
+            border-radius: 32px;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        .room .profile h2 {
+            display: inline-block;
+            line-height: 32px;
+        }
+        .room .messages {
+            margin-left: 37px;
+        }
+        .room .messages .message .profile img {
+            width: 16px;
+            height: 16px;
+        }
+        .room .messages .message .profile b {
+            display: inline-block;
+            line-height: 16px;
+        }
+        .message_body {
+            padding: 0;
+            margin: 0 0 8px 28px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        span.notice {
+            color: #555555;
+        }
+    </style>
+</head>
+<body>
+<div style="float: left;">
+    Information: <a href="">https://t2bot.io/lettermail</a>
+</div>
+<div id="header_info">
+    <img src="t2b-logo.png" />
+    <p>
+        You are receiving this letter because you are subscribed to t2bot.io's lettermail bridge.
+    </p>
+    <p>
+        To unsubscribe, go to <a href="">https://post.t2bot.io/unsubscribe</a> and use this code:
+    </p>
+    <code>{{unsubCode}}</code>
+</div>
+<div style="clear: both; width: 100%;">&nbsp;</div>
+<div id="content">
+    <p id="date">{{dateFriendly}}</p>
+    <p>
+        Hello, this is your weekly digest of messages from Matrix. This bridge is meant to be a proof of
+        concept and not actually used for realistic purposes, so some messages may be missing or shortened
+        to cut down on printing costs. For more information about the bridge and its purpose, visit
+        <a href="">https://t2bot.io/lettermail</a>
+    </p>
+
+    {% for room in rooms %}
+        <div class="room">
+            <div class="profile">
+                {% if room.avatar %}
+                    <img src="{{room.avatar}}" />
+                {% else %}
+                    <img src="room.png" />
+                {% endif %}
+                {% if room.name %}
+                    <h2>{{room.name}}</h2>
+                {% else %}
+                    <h2>Unnamed room</h2>
+                {% endif %}
+            </div>
+            <div class="messages">
+                {% for message in room.messages %}
+                    <div class="message">
+                        <div class="profile">
+                            {% if message.avatar %}
+                                <img src="{{message.avatar}}" />
+                            {% else %}
+                                <img src="person.png" />
+                            {% endif %}
+                            <b>{{message.name}}</b>
+                        </div>
+                        <p class="message_body">
+                            {% if message.kind == "m.notice" %}
+                                <span class="notice">{{message.body}}</span>
+                            {% elsif message.kind == "m.emote" %}
+                                * {{message.name}} {{message.body}}
+                            {% else %}
+                                {{message.body}}
+                            {% endif %}
+                        </p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+</div>
+</body>
+</html>

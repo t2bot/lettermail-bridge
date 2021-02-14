@@ -93,7 +93,6 @@ export async function ecmLoopRun(appservice: Appservice) {
         for (const piece of notScanned) {
             await ecmApi.requestScan(piece.id);
         }
-
     };
     const runFn = async () => {
         try {
