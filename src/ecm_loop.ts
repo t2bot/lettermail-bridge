@@ -4,6 +4,7 @@ import { EarthClassMailApi, ECMPieceAttribute } from "./EarthClassMailApi";
 import { PDF } from "./PDF";
 import * as fetch from "node-fetch";
 import { sha256 } from "./utils";
+import { MailState, PgDb } from "./PgDb";
 
 const ecmApi = new EarthClassMailApi(config.earthClassMail.apiUrl);
 const POLL_MS = 2 * 60 * 60 * 1000; // 2 hours
@@ -27,12 +28,20 @@ export async function ecmLoopRun(appservice: Appservice) {
         const notScanned = pieces.filter(p => p.attributes.includes(ECMPieceAttribute.Unscanned) && !p.attributes.includes(ECMPieceAttribute.Pending));
 
         LogService.info("ecm_loop#ecmLoopRun", `${pendingScan.length} pieces are pending a scan`);
+        const db = await PgDb.getInstance();
 
         for (const piece of scanned) {
+            LogService.info("ecm_loop#ecmLoopRun", `Handling piece ${piece.id}`);
+            const state = await db.getMailState(piece.id);
+            if (state !== MailState.Unknown) {
+                LogService.info("ecm_loop#ecmLoopRun", `Skipping piece ${piece.id}: mail state is ${state}`);
+                continue;
+            }
+
             const media = await ecmApi.getPieceMedia(piece.id);
             const pdf = media.find(m => m.content_type.toLowerCase() === 'application/pdf');
             if (!pdf) {
-                // TODO: Flag skipped
+                await db.setMailState(piece.id, MailState.Invalid);
                 const pieceUrl = ecmApi.webUrlForPiece(piece);
                 await appservice.botClient.sendNotice(config.matrix.managementRoom, `No PDF available for mail: ${pieceUrl}`);
                 continue;
@@ -43,7 +52,7 @@ export async function ecmLoopRun(appservice: Appservice) {
             htmlPages.splice(0, 1); // envelope
             const routedRoom = await PDF.extractRoomRoute(data);
             if (!routedRoom) {
-                // TODO: Flag skipped
+                await db.setMailState(piece.id, MailState.Unroutable);
                 const pieceUrl = ecmApi.webUrlForPiece(piece);
                 await appservice.botClient.sendNotice(config.matrix.managementRoom, `Unroutable mail: ${pieceUrl}`);
                 continue;
@@ -82,12 +91,14 @@ export async function ecmLoopRun(appservice: Appservice) {
                     await intent.underlyingClient.sendHtmlText(resolvedRoomId, page);
                 }
             } catch (e) {
-                // TODO: Flag skipped
+                await db.setMailState(piece.id, MailState.Unroutable);
                 const pieceUrl = ecmApi.webUrlForPiece(piece);
                 await appservice.botClient.sendNotice(config.matrix.managementRoom, `Unable to send mail ${pieceUrl} to ${routedRoom} (${resolvedRoomId}): ${e?.message || e?.body?.message}`);
                 LogService.error("ecm_loop#ecmRunLoop", e);
                 continue;
             }
+
+            await db.setMailState(piece.id, MailState.Processed);
         }
 
         for (const piece of notScanned) {

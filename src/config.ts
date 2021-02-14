@@ -24,7 +24,15 @@ interface IConfig {
             botName: string;
             botAvatar: string;
         };
-    }
+    },
+    database: {
+        host: string;
+        port: number;
+        username: string;
+        password: string;
+        database: string;
+        sslmode: string;
+    },
 }
 
 const defaultConfig: IConfig = {
@@ -51,6 +59,14 @@ const defaultConfig: IConfig = {
             botName: "Postmaster",
             botAvatar: "mxc://t2bot.io/b741b75047dfbde0470a93566325de2e54b439e0",
         },
+    },
+    database: {
+        host: "localhost",
+        port: 5432,
+        username: "lettermail",
+        password: "lettermail",
+        database: "lettermail",
+        sslmode: "require",
     },
 };
 

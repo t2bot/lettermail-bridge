@@ -51,3 +51,12 @@ earthClassMail:
   # the first returned mailbox is the one to use (this is the case for
   # most setups).
   inboxId: 0
+
+# The postgresql database settings for the bridge to use.
+database:
+  host: "localhost"
+  port: 5432
+  username: "lettermail"
+  password: "s3cret"
+  database: "lettermail"
+  sslmode: "require"
