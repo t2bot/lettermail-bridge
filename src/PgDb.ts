@@ -18,6 +18,8 @@ export class PgDb {
     private async migrateUp() {
         LogService.info("PgDb", "Migrating up...");
         await this.client.query("CREATE TABLE IF NOT EXISTS ecm_letters (piece_id INTEGER NOT NULL PRIMARY KEY, state TEXT NOT NULL);");
+        await this.client.query("CREATE TABLE IF NOT EXISTS lob_room_subscriptions (user_id TEXT NOT NULL, room TEXT NOT NULL, PRIMARY KEY (user_id, room));");
+        await this.client.query("CREATE TABLE IF NOT EXISTS lob_addresses (user_id TEXT NOT NULL UNIQUE, addr TEXT NOT NULL, PRIMARY KEY (user_id, addr));");
     }
 
     public async setMailState(pieceId: number, state: MailState) {
@@ -30,6 +32,25 @@ export class PgDb {
         const r = await this.client.query("SELECT state FROM ecm_letters WHERE piece_id = $1", [pieceId]);
         if (r.rows?.length) return r.rows[0].state;
         return MailState.Unknown;
+    }
+
+    public async setAddress(userId: string, lobAddr: string) {
+        LogService.info("PgDb", `Setting ${userId} address to ${lobAddr}`);
+        await this.client.query("INSERT INTO lob_addresses (user_id, addr) VALUES ($1, $2) ON CONFLICT (user_id) DO UPDATE SET addr = $2", [userId, lobAddr]);
+    }
+
+    public async getAddress(userId: string): Promise<string> {
+        LogService.info("PgDb", `Getting ${userId} address`);
+        const r = await this.client.query("SELECT addr FROM lob_addresses WHERE user_id = $1", [userId]);
+        if (r.rows?.length) return r.rows[0].addr;
+        return null;
+    }
+
+    public async getSubscribedRooms(userId: string): Promise<string[]> {
+        LogService.info("PgDb", `Getting ${userId} subscribed rooms`);
+        const r = await this.client.query("SELECT room FROM lob_room_subscriptions WHERE user_id = $1", [userId]);
+        if (r.rows?.length) return r.rows.map(e => e.room);
+        return [];
     }
 
     public static async getInstance(): Promise<PgDb> {

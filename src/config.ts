@@ -24,7 +24,12 @@ interface IConfig {
             botName: string;
             botAvatar: string;
         };
-    },
+    };
+    lob: {
+        apiKey: string;
+        maxRooms: number;
+        maxMessagesPerRoom: number;
+    };
     database: {
         host: string;
         port: number;
@@ -32,7 +37,7 @@ interface IConfig {
         password: string;
         database: string;
         sslmode: string;
-    },
+    };
 }
 
 const defaultConfig: IConfig = {
@@ -41,6 +46,11 @@ const defaultConfig: IConfig = {
         username: "email@example.org",
         password: "unknown",
         inboxId: 0,
+    },
+    lob: {
+        apiKey: "not set",
+        maxRooms: 7,
+        maxMessagesPerRoom: 3,
     },
     matrix: {
         defaultAvatar: "mxc://t2bot.io/183b28d9d10511e3c8b937674168c1de604076c0",

@@ -12,11 +12,12 @@ import {
 import { ecmLoopRun } from "./ecm_loop";
 import config from "./config";
 import * as path from "path";
-import {Liquid} from "liquidjs";
+import { Liquid } from "liquidjs";
 import * as express from "express";
-import { LQ_TEST } from "./TMP";
-import * as htmlToPdf from "html-pdf-node";
-import * as inlineImages from "inline-images";
+import * as Lob from "lob";
+import { LetterManager } from "./LetterManager";
+import { PgDb } from "./PgDb";
+import * as fs from "fs";
 
 LogService.setLogger(new RichConsoleLogger());
 LogService.setLevel(LogLevel.DEBUG);
@@ -61,30 +62,24 @@ const lqEngine = new Liquid({
     cache: process.env.NODE_ENV === 'production',
 });
 
+const lob = new Lob(config.lob.apiKey);
+
 (async function () {
+    const letters = new LetterManager(
+        appservice.botClient,
+        await PgDb.getInstance(),
+        lob,
+        lqEngine,
+        tmplPath,
+    );
+
+    const pdf = await letters.makePdfFor("@travis:localhost");
+    await fs.promises.writeFile("./storage/test.pdf", pdf);
+
     appservice.expressAppInstance.engine('liquid', lqEngine.express());
     appservice.expressAppInstance.set('views', tmplPath);
     appservice.expressAppInstance.set('view engine', 'liquid');
-    appservice.expressAppInstance.use('/', express.static(tmplPath));
-    appservice.expressAppInstance.get('/pdf', async (req, res) => {
-        const f = await lqEngine.renderFile("letter.liquid", LQ_TEST);
-        const inlined = inlineImages(f, tmplPath).toString();
-        const pdf = await htmlToPdf.generatePdf({content: inlined}, {
-            printBackground: true,
-            format: 'letter',
-            margin: {
-                top: '0.1in',
-                right: '0.1in',
-                left: '0.1in',
-                bottom: '0.1in',
-            },
-        });
-        res.header('Content-Type', 'application/pdf');
-        return res.send(pdf);
-    });
-    appservice.expressAppInstance.get('/test', (req, res) => {
-        return res.render('letter.liquid', LQ_TEST);
-    });
+    appservice.expressAppInstance.use('/', express.static(tmplPath)); // TODO: Use static dir
 
     LogService.info("index", "Starting appservice...");
     await appservice.begin();

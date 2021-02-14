@@ -52,6 +52,17 @@ earthClassMail:
   # most setups).
   inboxId: 0
 
+# Options for configuring the Lob side of the bridge.
+lob:
+  # The secret API key for your lob account. Get this from Settings -> API Keys
+  apiKey: "from_lob"
+
+  # The maximum number of rooms to allow users to subscribe to.
+  maxRooms: 7
+
+  # The maximum number of most recent messages in a room to consider for rendering.
+  maxMessagesPerRoom: 3
+
 # The postgresql database settings for the bridge to use.
 database:
   host: "localhost"
