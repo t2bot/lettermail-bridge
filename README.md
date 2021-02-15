@@ -1,3 +1,9 @@
+# Bridge is under development
+
+**This project is under development. The documentation may be lying to you while the thing is built.**
+
+Proceed with caution.
+
 # lettermail-bridge
 
 ![Matrix](https://img.shields.io/matrix/lettermail-bridge:matrix.org?style=flat-square)
