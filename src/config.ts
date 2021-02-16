@@ -21,6 +21,7 @@ interface IConfig {
             port: number;
             csUrl: string;
             dataPath: string;
+            assetsPath: string;
             botName: string;
             botAvatar: string;
         };
@@ -66,6 +67,7 @@ const defaultConfig: IConfig = {
             port: 8080,
             csUrl: "https://localhost:8448",
             dataPath: "storage",
+            assetsPath: "tmpl/assets",
             botName: "Postmaster",
             botAvatar: "mxc://t2bot.io/b741b75047dfbde0470a93566325de2e54b439e0",
         },

@@ -33,6 +33,9 @@ matrix:
     # Where to store miscellaneous information about the appservice.
     dataPath: "storage"
 
+    # Where static assets are served/read by the bridge. Should be near the templates.
+    assetsPath: "tmpl/assets"
+
     # Profile information for the bot itself.
     botName: "Postmaster"
     botAvatar: "mxc://t2bot.io/b741b75047dfbde0470a93566325de2e54b439e0"

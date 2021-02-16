@@ -79,7 +79,7 @@ const lob = new Lob(config.lob.apiKey);
     appservice.expressAppInstance.engine('liquid', lqEngine.express());
     appservice.expressAppInstance.set('views', tmplPath);
     appservice.expressAppInstance.set('view engine', 'liquid');
-    appservice.expressAppInstance.use('/', express.static(tmplPath)); // TODO: Use static dir
+    appservice.expressAppInstance.use('/assets', express.static(config.matrix.appservice.assetsPath));
 
     LogService.info("index", "Starting appservice...");
     await appservice.begin();

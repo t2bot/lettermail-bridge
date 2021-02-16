@@ -142,7 +142,7 @@ export class LetterManager {
             dateFriendly: moment().format('dddd, MMMM do, YYYY'),
             rooms: rooms,
         });
-        const inlined = inlineImages(f, this.tmplPath).toString();
+        const inlined = inlineImages(f, config.matrix.appservice.assetsPath).toString();
         return await htmlToPdf.generatePdf({content: inlined}, {
             printBackground: true,
             format: 'letter',
