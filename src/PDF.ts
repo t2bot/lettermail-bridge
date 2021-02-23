@@ -42,7 +42,7 @@ export class PDF {
                 await page.render({canvasContext: context, viewport}).promise;
                 const png = PNG.sync.read(canvas.toBuffer());
                 qrcode = jsQR(png.data, png.width, png.height, {inversionAttempts: "attemptBoth"});
-                if (qrcode && qrcode.data.startsWith("URL:https://matrix.to/#/")) {
+                if (qrcode && qrcode.data.includes("https://matrix.to/#/")) {
                     break;
                 } else {
                     qrcode = null;
@@ -51,7 +51,13 @@ export class PDF {
             if (!qrcode) {
                 return null;
             }
-            const link = Permalinks.parseUrl(qrcode.data.substring("URL:".length));
+            if (qrcode.data.startsWith("URL:")) {
+                qrcode.data = qrcode.data.substring("URL:".length);
+            }
+            if (!qrcode.data.startsWith("https://matrix.to/#/")) {
+                return null;
+            }
+            const link = Permalinks.parseUrl(qrcode.data);
             return link.roomIdOrAlias;
         } finally {
             await f.cleanup();
