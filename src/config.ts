@@ -6,6 +6,7 @@ interface IConfig {
         username: string;
         password: string;
         inboxId: number;
+        protectedPieces: number[];
     };
     matrix: {
         defaultAvatar: string;
@@ -47,6 +48,7 @@ const defaultConfig: IConfig = {
         username: "email@example.org",
         password: "unknown",
         inboxId: 0,
+        protectedPieces: [],
     },
     lob: {
         apiKey: "not set",

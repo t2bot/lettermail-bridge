@@ -98,6 +98,12 @@ export async function ecmLoopRun(appservice: Appservice) {
                 continue;
             }
 
+            if (!config.earthClassMail.protectedPieces.includes(piece.id)) {
+                await ecmApi.requestDestroy(piece.id);
+            } else {
+                LogService.info("ecm_loop#ecmRunLoop", `Not deleting ${piece.id} because it is protected`);
+            }
+
             await db.setMailState(piece.id, MailState.Processed);
         }
 

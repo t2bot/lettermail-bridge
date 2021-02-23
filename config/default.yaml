@@ -55,6 +55,10 @@ earthClassMail:
   # most setups).
   inboxId: 0
 
+  # Mail items listed in here will not be deleted. Typically useful if you
+  # want to keep test letters around.
+  protectedPieces: []
+
 # Options for configuring the Lob side of the bridge.
 lob:
   # The secret API key for your lob account. Get this from Settings -> API Keys

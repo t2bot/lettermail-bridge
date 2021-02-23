@@ -188,6 +188,21 @@ export class EarthClassMailApi {
         }).then(r => r.json());
     }
 
+    public async requestDestroy(pieceId: number) {
+        LogService.info("EarthClassMailApi", `Requesting destroy of piece ID ${pieceId}`);
+        await fetch(`${this.apiUrl}/v1/pieces/${pieceId}/disposal`, {
+            method: 'POST',
+            headers: {
+                Authorization: `bearer ${this.token.access_token}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                delete_scans: "true",
+                operation_action: "recycle",
+            }),
+        }).then(r => r.json());
+    }
+
     public webUrlForPiece(piece: ECMPiece): string {
         return `https://app.earthclassmail.com/inboxes/${piece.inbox_id}/pieces/${piece.id}`;
     }
