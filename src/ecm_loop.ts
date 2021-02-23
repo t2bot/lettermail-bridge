@@ -38,6 +38,11 @@ export async function ecmLoopRun(appservice: Appservice) {
                 continue;
             }
 
+            if (!config.earthClassMail.doRead) {
+                LogService.info("ecm_loop#ecmLoopRun", `Skipping piece ${piece.id}: not able to read mail`);
+                continue;
+            }
+
             const media = await ecmApi.getPieceMedia(piece.id);
             const pdf = media.find(m => m.content_type.toLowerCase() === 'application/pdf');
             if (!pdf) {
@@ -80,15 +85,19 @@ export async function ecmLoopRun(appservice: Appservice) {
                     LogService.warn("ecm_loop#ecmRunLoop", e);
                 }
 
-                try {
-                    await intent.underlyingClient.joinRoom(routedRoom);
-                } catch (e) {
-                    LogService.warn("ecm_loop#ecmRunLoop", e);
-                }
-                await intent.ensureJoined(resolvedRoomId);
+                if (config.earthClassMail.doSend) {
+                    try {
+                        await intent.underlyingClient.joinRoom(routedRoom);
+                    } catch (e) {
+                        LogService.warn("ecm_loop#ecmRunLoop", e);
+                    }
+                    await intent.ensureJoined(resolvedRoomId);
 
-                for (const page of htmlPages) {
-                    await intent.underlyingClient.sendHtmlText(resolvedRoomId, page);
+                    for (const page of htmlPages) {
+                        await intent.underlyingClient.sendHtmlText(resolvedRoomId, page);
+                    }
+                } else {
+                    LogService.info("ecmLoop#ecmRunLoop", `Not sending ${piece.id} to room ${resolvedRoomId} - disabled`);
                 }
             } catch (e) {
                 await db.setMailState(piece.id, MailState.Unroutable);
@@ -98,7 +107,7 @@ export async function ecmLoopRun(appservice: Appservice) {
                 continue;
             }
 
-            if (!config.earthClassMail.protectedPieces.includes(piece.id)) {
+            if (!config.earthClassMail.protectedPieces.includes(piece.id) && config.earthClassMail.doShred) {
                 await ecmApi.requestDestroy(piece.id);
             } else {
                 LogService.info("ecm_loop#ecmRunLoop", `Not deleting ${piece.id} because it is protected`);

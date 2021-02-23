@@ -59,6 +59,15 @@ earthClassMail:
   # want to keep test letters around.
   protectedPieces: []
 
+  # When false, the bridge will not shred processed mail. Defaults to true.
+  doShred: true
+
+  # When false, the bridge will not read mail. Defaults to true.
+  doRead: true
+
+  # When false, the bridge will not try to send Matrix messages. Defaults to true.
+  doSend: true
+
 # Options for configuring the Lob side of the bridge.
 lob:
   # The secret API key for your lob account. Get this from Settings -> API Keys

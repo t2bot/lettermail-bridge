@@ -7,6 +7,9 @@ interface IConfig {
         password: string;
         inboxId: number;
         protectedPieces: number[];
+        doShred: boolean;
+        doRead: boolean;
+        doSend: boolean;
     };
     matrix: {
         defaultAvatar: string;
@@ -49,6 +52,9 @@ const defaultConfig: IConfig = {
         password: "unknown",
         inboxId: 0,
         protectedPieces: [],
+        doShred: true,
+        doRead: true,
+        doSend: true,
     },
     lob: {
         apiKey: "not set",
