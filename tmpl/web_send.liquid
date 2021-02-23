@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Send a letter to Matrix</title>
+    <link href="/assets/common.css" rel="stylesheet" />
+</head>
+<body>
+    <noscript>Sorry, this page requires JavaScript.</noscript>
+
+    <div id="default">
+        <h1>Send a letter to Matrix</h1>
+        <h3>Enter a destination</h3>
+        <form onsubmit="makeLabel(event)">
+            <div><input type="text" id="targetBox" placeholder="#room:example.org" /></div>
+            <div><button type="submit">Create label</button></div>
+            <div class="error"></div>
+        </form>
+    </div>
+    <div id="label" style="display: none;">
+        <h1>Send a letter to <span id="target">Matrix</span></h1>
+        <p>Address your letter to us and include the QR code inside your envelope.</p>
+        <div>
+            <address>
+                t2bot.io letter mail<br>
+                9450 SW Gemini Dr<br>
+                PMB 93379<br>
+                Beaverton, Oregon  97008-7105 US<br>
+            </address>
+            <canvas id="qrcode"></canvas>
+        </div>
+        <h3>That's it.</h3>
+        <p style="text-align: center;">Don't forget to include your actual letter and postage though.</p>
+        <div id="footer">
+            Delivery times vary depending on region. The first line of your return address will
+            be visible to the room. To remain anonymous, do not include a return address. Letters
+            are destroyed after they are sent to the room.<br/>
+            <br/>
+            <a href="https://t2bot.io/docs/legal/privacy-v1/">Privacy Policy</a>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/qrcode@1.4.4/build/qrcode.min.js"></script>
+    <script src="/assets/send.js"></script>
+</body>
+</html>

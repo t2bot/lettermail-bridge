@@ -73,13 +73,14 @@ const lob = new Lob(config.lob.apiKey);
         tmplPath,
     );
 
-    const pdf = await letters.makePdfFor("@travis:localhost");
-    await fs.promises.writeFile("./storage/test.pdf", pdf);
+    // const pdf = await letters.makePdfFor("@travis:localhost");
+    // await fs.promises.writeFile("./storage/test.pdf", pdf);
 
     appservice.expressAppInstance.engine('liquid', lqEngine.express());
     appservice.expressAppInstance.set('views', tmplPath);
     appservice.expressAppInstance.set('view engine', 'liquid');
     appservice.expressAppInstance.use('/assets', express.static(config.matrix.appservice.assetsPath));
+    appservice.expressAppInstance.get('/', (req, res) => res.render('web_send.liquid'));
 
     LogService.info("index", "Starting appservice...");
     await appservice.begin();
