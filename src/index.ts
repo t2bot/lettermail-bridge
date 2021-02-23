@@ -84,7 +84,7 @@ const lob = new Lob(config.lob.apiKey);
     LogService.info("index", "Starting appservice...");
     await appservice.begin();
 
-    config.matrix.managementRoom = await appservice.botClient.resolveRoom(config.matrix.managementRoom);
+    config.matrix.managementRoom = await appservice.botClient.joinRoom(config.matrix.managementRoom);
 
     await appservice.botClient.setDisplayName(config.matrix.appservice.botName);
     await appservice.botClient.setAvatarUrl(config.matrix.appservice.botAvatar);
