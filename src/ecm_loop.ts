@@ -74,18 +74,18 @@ export async function ecmLoopRun(appservice: Appservice) {
                 await intent.ensureRegistered();
 
                 try {
-                    await intent.underlyingClient.joinRoom(routedRoom);
-                } catch (e) {
-                    LogService.warn("ecm_loop#ecmRunLoop", e);
-                }
-                await intent.ensureJoined(resolvedRoomId);
-
-                try {
                     await intent.underlyingClient.setDisplayName(displayName);
                     await intent.underlyingClient.setAvatarUrl(config.matrix.defaultAvatar);
                 } catch (e) {
                     LogService.warn("ecm_loop#ecmRunLoop", e);
                 }
+
+                try {
+                    await intent.underlyingClient.joinRoom(routedRoom);
+                } catch (e) {
+                    LogService.warn("ecm_loop#ecmRunLoop", e);
+                }
+                await intent.ensureJoined(resolvedRoomId);
 
                 for (const page of htmlPages) {
                     await intent.underlyingClient.sendHtmlText(resolvedRoomId, page);
